@@ -1,0 +1,20 @@
+{
+    "name": "jm/balancedpayment-bundle",
+    "type": "symfony-bundle",
+    "description": "Integrate BalancedPayment into your application",
+    "keywords": ["balanced", "balancedpayment", "payment"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jeremy Marc",
+            "email": "jeremy.marc@me.com"
+    }
+    ],
+    "require": {
+        "php": ">=5.3.2",
+    },
+    "target-dir": "Jm/BalancedPayment",
+    "autoload": {
+        "psr-0": { "Jm\\BalancedPayment": "" }
+    }
+}
