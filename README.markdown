@@ -9,8 +9,11 @@ Features include:
 - Unit tested
 
 TODO: 
-- BalancedListener to keep an history
-- Sonata Admin to list entities
+- Add Doctrine Event Listener to sync automatically Card/BankAccount with
+  BalancedPayment
+- Add a command to sync payments status
+- Add a Payment entity to list all previous debit/credit
+- Add BalancedEventListener to keep an history of all transactions
 
 
 Documentation
