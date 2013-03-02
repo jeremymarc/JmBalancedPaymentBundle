@@ -6,364 +6,282 @@ class BalancedPaymentTest extends \PHPUnit_Framework_TestCase
 {
     private $balancedPayment;
     private $email;
+    private $factory;
 
     protected function setUp()
     {
-        $testApiKey = "5ea5f75e807d11e2bbd9026ba7d31e6f";
-        $this->balancedPayment = $this->getBalancedPayment($testApiKey);
+        $this->factory = $this->getBalancedFactory();
+        $this->balancedPayment = $this->getBalancedPayment($this->factory);
+
         $this->email = uniqid(true) . "@test123.com";
     }
 
     public function testCreateAccount()
     {
-        $data = $this->balancedPayment->createAccount($this->email);
+        $marketPlace = $this->getMarketplace();
+        $this->factory->expects($this->once())
+            ->method('getMarketPlace')
+            ->will($this->returnValue($marketPlace))
+            ;
+        $marketPlace->expects($this->once())
+            ->method('createAccount')
+            ->with($this->email)
+        ;
 
-        $this->assertInstanceOf('Balanced\Account', $data);
-        $this->assertObjectHasAttribute('uri', $data);
-        $this->assertObjectHasAttribute('email_address', $data);
-        $this->assertObjectHasAttribute('created_at', $data);
+        $this->balancedPayment->createAccount($this->email);
     }
 
     public function testGetAccount()
     {
-        $data = $this->balancedPayment->createAccount($this->email);
-        $accountUri = $data->{'uri'};
-        $data = $this->balancedPayment->getAccount($accountUri);
+        $url = "http://uri";
+        $this->factory->expects($this->once())
+            ->method('getAccount')
+            ->with($url)
+            ;
 
-        $this->assertInstanceOf('Balanced\Account', $data);
-        $this->assertObjectHasAttribute('uri', $data);
-        $this->assertObjectHasAttribute('email_address', $data);
-        $this->assertObjectHasAttribute('created_at', $data);
-       
-        $this->assertEquals($data->{'uri'}, $accountUri);
+        $this->balancedPayment->getAccount($url);
     }
 
     public function testCreateBankAccount()
     {
-        $bankAccount = $this->getBankAccount();
         $user = $this->getUser();
         $user->expects($this->once())
             ->method('getUsername')
-            ->will($this->returnValue('Username'))
+            ->will($this->returnValue('username'))
         ;
 
+        $bankAccount = $this->getBankAccount();
+        $balancedBankAccount = $this->getBalancedBankAccount();
         $bankAccount->expects($this->once())
             ->method('getRoutingNumber')
-            ->will($this->returnValue('021000021'))
-        ; 
-        $bankAccount->expects($this->once())
-            ->method('getAccountNumber')
-            ->will($this->returnValue('9900000002'))
-        ; 
+            ->will($this->returnValue('routing'))
+        ;
         $bankAccount->expects($this->once())
             ->method('getType')
-            ->will($this->returnValue('savings'))
-        ; 
+            ->will($this->returnValue('checking'))
+        ;
         $bankAccount->expects($this->once())
             ->method('getOwner')
             ->will($this->returnValue($user))
-        ; 
+        ;
+        $bankAccount->expects($this->once())
+            ->method('getAccountNumber')
+            ->will($this->returnValue('account'))
+        ;
+        $balancedBankAccount->expects($this->once())
+            ->method('save')
+        ;
 
-        $data = $this->balancedPayment->createBankAccount($bankAccount); 
-        $this->assertInstanceOf('Balanced\BankAccount', $data);
-        $this->assertObjectHasAttribute('account_number', $data);
-        $this->assertObjectHasAttribute('bank_name', $data);
-        $this->assertObjectHasAttribute('can_debit', $data);
-        $this->assertObjectHasAttribute('uri', $data);
-        $this->assertObjectHasAttribute('routing_number', $data);
-        $this->assertObjectHasAttribute('type', $data);
-        
-        $this->assertEquals($data->{'routing_number'}, '021000021');
-        $this->assertEquals($data->{'account_number'}, 'xxxxxx0002');
-        $this->assertEquals($data->{'type'}, 'savings');
+
+        $this->factory->expects($this->once())
+            ->method('createBankAccount')
+            ->with(array(
+                'routing_number' => 'routing',
+                'type' => 'checking',
+                'name' => 'username',
+                'account_number' => 'account',
+            ))
+            ->will($this->returnValue($balancedBankAccount))
+        ;
+
+        $this->balancedPayment->createBankAccount($bankAccount); 
     }
 
     public function testGetBankAccount()
     {
-        $bankAccount = $this->getBankAccount();
-        $user = $this->getUser();
-        $user->expects($this->once())
-            ->method('getUsername')
-            ->will($this->returnValue('Username'))
+        $uri = "http://uri";
+        $this->factory->expects($this->once())
+            ->method('getBankAccount')
+            ->with($uri)
         ;
 
-        $bankAccount->expects($this->once())
-            ->method('getRoutingNumber')
-            ->will($this->returnValue('021000021'))
-        ; 
-        $bankAccount->expects($this->once())
-            ->method('getAccountNumber')
-            ->will($this->returnValue('9900000002'))
-        ; 
-        $bankAccount->expects($this->once())
-            ->method('getType')
-            ->will($this->returnValue('savings'))
-        ; 
-        $bankAccount->expects($this->once())
-            ->method('getOwner')
-            ->will($this->returnValue($user))
-        ; 
-
-        $data = $this->balancedPayment->createBankAccount($bankAccount); 
-        $bankAccount = $this->balancedPayment->getBankAccount($data->{'uri'});
-
-        $this->assertInstanceOf('Balanced\BankAccount', $bankAccount);
-        $this->assertEquals($bankAccount->{'routing_number'}, '021000021');
-        $this->assertEquals($bankAccount->{'account_number'}, 'xxxxxx0002');
-        $this->assertEquals($bankAccount->{'type'}, 'savings');
+       $this->balancedPayment->getBankAccount($uri);
     }
 
     public function testAttachBankAccount()
     {
-        $bankAccount = $this->getBankAccount();
-        $user = $this->getUser();
-        $user->expects($this->once())
-            ->method('getUsername')
-            ->will($this->returnValue('Username'))
+        $accountUri = "http://account.uri";
+        $bankAccountUri = "http://bank.uri";
+
+        $account = $this->getAccount();
+        $this->factory->expects($this->once())
+            ->method('getAccount')
+            ->with($accountUri)
+            ->will($this->returnValue($account))
         ;
 
-        $bankAccount->expects($this->once())
-            ->method('getRoutingNumber')
-            ->will($this->returnValue('021000021'))
-        ; 
-        $bankAccount->expects($this->once())
-            ->method('getAccountNumber')
-            ->will($this->returnValue('9900000002'))
-        ; 
-        $bankAccount->expects($this->once())
-            ->method('getType')
-            ->will($this->returnValue('savings'))
-        ; 
-        $bankAccount->expects($this->once())
-            ->method('getOwner')
-            ->will($this->returnValue($user))
-        ; 
-
-        $bankAccountData = $this->balancedPayment->createBankAccount($bankAccount); 
-        $userData = $this->balancedPayment->createAccount($this->email);
-        $data = $this->balancedPayment->attachBankAccount($bankAccountData->{'uri'}, $userData->{'uri'});
-
-        $this->assertInstanceOf('Balanced\Account', $data);
-        $this->assertEquals($userData->{'email_address'}, $data->{'email_address'});
-
-        //todo list all bankaccount; look's like it's missing inside balanced-php
+        $this->balancedPayment->attachBankAccount($bankAccountUri, $accountUri);
     }
 
-    /**
-     * @expectedException RESTful\Exceptions\HTTPError
-     */
     public function testDeleteBankAccount()
     {
-        $bankAccount = $this->getBankAccount();
-        $user = $this->getUser();
-        $user->expects($this->once())
-            ->method('getUsername')
-            ->will($this->returnValue('Username'))
+        $bankAccountUri = "http://bank.uri";
+        $bankAccount = $this->getBalancedBankAccount();
+        $this->factory->expects($this->once())
+            ->method('getBankAccount')
+            ->with($bankAccountUri)
+            ->will($this->returnValue($bankAccount))
+        ;
+        $bankAccount->expects($this->once())
+            ->method('delete')
         ;
 
-        $bankAccount->expects($this->once())
-            ->method('getRoutingNumber')
-            ->will($this->returnValue('021000021'))
-        ; 
-        $bankAccount->expects($this->once())
-            ->method('getAccountNumber')
-            ->will($this->returnValue('9900000002'))
-        ; 
-        $bankAccount->expects($this->once())
-            ->method('getType')
-            ->will($this->returnValue('savings'))
-        ; 
-        $bankAccount->expects($this->once())
-            ->method('getOwner')
-            ->will($this->returnValue($user))
-        ; 
-
-        $bankAccountData = $this->balancedPayment->createBankAccount($bankAccount); 
-        $this->assertInstanceOf('Balanced\BankAccount', $bankAccountData);
-
-        $bankAccountData2 = $this->balancedPayment->getBankAccount($bankAccountData->{'uri'});
-        $this->assertEquals($bankAccountData->{'uri'}, $bankAccountData2->{'uri'});
-
-        $this->balancedPayment->deleteBankAccount($bankAccountData->{'uri'});
-        $bankAccountData2 = $this->balancedPayment->getBankAccount($bankAccountData->{'uri'});
+        $this->balancedPayment->deleteBankAccount($bankAccountUri);
     }
 
     public function testCreateCard()
     {
-        $creditCard = $this->getCard();
-        $creditCard->expects($this->once())
+        $card = $this->getCard();
+        $balancedCard = $this->getBalancedCard();
+        $marketPlace = $this->getMarketPlace();
+
+        $card->expects($this->once())
             ->method('getNumber')
-            ->will($this->returnValue('4111111111111111'))
+            ->will($this->returnValue('number'))
         ;
-        $creditCard->expects($this->once())
+        $card->expects($this->once())
             ->method('getCvv')
-            ->will($this->returnValue('123'))
+            ->will($this->returnValue('cvv'))
         ;
-        $creditCard->expects($this->once())
+        $card->expects($this->once())
             ->method('getExpirationMonth')
-            ->will($this->returnValue('01'))
-            ;
-        $creditCard->expects($this->once())
+            ->will($this->returnValue('month'))
+        ;
+        $card->expects($this->once())
             ->method('getExpirationYear')
-            ->will($this->returnValue('2016'))
+            ->will($this->returnValue('year'))
+        ;
+        $this->factory->expects($this->once())
+            ->method('getMarketPlace')
+            ->will($this->returnValue($marketPlace))
             ;
+        $marketPlace->expects($this->once())
+            ->method('createCard')
+        ;
 
-        $data = $this->balancedPayment->createCard($creditCard);
-
-        $this->assertInstanceOf('Balanced\Card', $data);
-        $this->assertObjectHasAttribute('account', $data);
-        $this->assertObjectHasAttribute('brand', $data);
-        $this->assertObjectHasAttribute('can_debit', $data);
-        $this->assertObjectHasAttribute('card_type', $data);
-        $this->assertObjectHasAttribute('expiration_month', $data);
-        $this->assertObjectHasAttribute('expiration_year', $data);
-        $this->assertObjectHasAttribute('hash', $data);
-        $this->assertObjectHasAttribute('uri', $data);
-        $this->assertObjectHasAttribute('id', $data);
-        $this->assertObjectHasAttribute('is_valid', $data);
-        
-        //$this->assertEquals($data->{'expiration_month'}, '01');
-        //$this->assertEquals($data->{'account_year'}, '2016');
+        $this->balancedPayment->createCard($card);
     }
 
     public function testGetCard()
-    {
-        $creditCard = $this->getCard();
-        $creditCard->expects($this->once())
-            ->method('getNumber')
-            ->will($this->returnValue('4111111111111111'))
-        ;
-        $creditCard->expects($this->once())
-            ->method('getCvv')
-            ->will($this->returnValue('123'))
-        ;
-        $creditCard->expects($this->once())
-            ->method('getExpirationMonth')
-            ->will($this->returnValue('01'))
-            ;
-        $creditCard->expects($this->once())
-            ->method('getExpirationYear')
-            ->will($this->returnValue('2016'))
+    { 
+        $cardUri = "http://card.uri";
+        $this->factory->expects($this->once())
+            ->method('getCard')
+            ->with($cardUri)
             ;
 
-        $creditCardData = $this->balancedPayment->createCard($creditCard);
-        $this->assertInstanceOf('Balanced\Card', $creditCardData);
-
-        $creditCardData2 = $this->balancedPayment->getCard($creditCardData->{'uri'});
-        $this->assertInstanceOf('Balanced\Card', $creditCardData);
-        $this->assertEquals($creditCardData->{'uri'}, $creditCardData2->{'uri'});
+        $this->balancedPayment->getCard($cardUri);
     }
 
     public function testAttachCard()
     {
-        $creditCard = $this->getCard();
-        $creditCard->expects($this->once())
-            ->method('getNumber')
-            ->will($this->returnValue('4111111111111111'))
-        ;
-        $creditCard->expects($this->once())
-            ->method('getCvv')
-            ->will($this->returnValue('123'))
-        ;
-        $creditCard->expects($this->once())
-            ->method('getExpirationMonth')
-            ->will($this->returnValue('01'))
+        $accountUri = "http://uri";
+        $cardUri = "http://card.uri";
+
+        $account = $this->getAccount();
+        $this->factory->expects($this->once())
+            ->method('getAccount')
+            ->with($accountUri)
+            ->will($this->returnValue($account))
             ;
-        $creditCard->expects($this->once())
-            ->method('getExpirationYear')
-            ->will($this->returnValue('2016'))
-            ;
+        $account->expects($this->once())
+            ->method('addCard')
+            ->with($cardUri)
+        ;
 
-        $creditCardData = $this->balancedPayment->createCard($creditCard);
-        $this->assertInstanceOf('Balanced\Card', $creditCardData);
 
-        $userData = $this->balancedPayment->createAccount($this->email);
-        $this->assertInstanceOf('Balanced\Account', $userData);
-
-        $data = $this->balancedPayment->attachCard($creditCardData->{'uri'}, $userData->{'uri'});
-        //todo: add list test
+        $this->balancedPayment->attachCard($cardUri, $accountUri);
     }
 
-    /**
-     * @expectedException RESTful\Exceptions\HTTPError
-     */
     public function testDeleteCard()
     {
-        $creditCard = $this->getCard();
-        $creditCard->expects($this->once())
-            ->method('getNumber')
-            ->will($this->returnValue('4111111111111111'))
+        $cardUri = "http://card.uri";
+        $card = $this->getBalancedCard();
+        $this->factory->expects($this->once())
+            ->method('getCard')
+            ->with($cardUri)
+            ->will($this->returnValue($card))
         ;
-        $creditCard->expects($this->once())
-            ->method('getCvv')
-            ->will($this->returnValue('123'))
+        $card->expects($this->once())
+            ->method('delete')
         ;
-        $creditCard->expects($this->once())
-            ->method('getExpirationMonth')
-            ->will($this->returnValue('01'))
-            ;
-        $creditCard->expects($this->once())
-            ->method('getExpirationYear')
-            ->will($this->returnValue('2016'))
-            ;
 
-        $creditCardData = $this->balancedPayment->createCard($creditCard);
-        $this->assertInstanceOf('Balanced\Card', $creditCardData);
-        $creditCardData->delete();
-
-        $creditCardData2 = $this->balancedPayment->getCard($creditCardData->{'uri'});
-        $this->assertInstanceOf('Balanced\Card', $creditCardData);
+        $this->balancedPayment->deleteCard($cardUri);
     }
 
     public function testDebit()
     {
-        $accountData = $this->balancedPayment->createAccount($this->email);
-        $this->assertInstanceOf('Balanced\Account', $accountData);
-        $creditCard = $this->getCard();
-        $creditCard->expects($this->once())
-            ->method('getNumber')
-            ->will($this->returnValue('4111111111111111'))
-        ;
-        $creditCard->expects($this->once())
-            ->method('getCvv')
-            ->will($this->returnValue('123'))
-        ;
-        $creditCard->expects($this->once())
-            ->method('getExpirationMonth')
-            ->will($this->returnValue('01'))
-            ;
-        $creditCard->expects($this->once())
-            ->method('getExpirationYear')
-            ->will($this->returnValue('2016'))
+        $cardUri = "http://card.uri";
+        $card = $this->getBalancedCard();
+        $account = $this->getAccount();
+        $this->factory->expects($this->once())
+            ->method('getCard')
+            ->with($cardUri)
+            ->will($this->returnValue($card))
             ;
 
-        $cardData = $this->balancedPayment->createCard($creditCard);
-        $this->assertInstanceOf('Balanced\Card', $cardData);
-        $this->balancedPayment->attachCard($cardData->{'uri'}, $accountData->{'uri'});
+        $accountUri = "http://uri";
+        $this->factory->expects($this->once())
+            ->method('getAccount')
+            ->with($accountUri)
+            ->will($this->returnValue($account))
+            ;
+        $account->expects($this->once())
+            ->method('debit')
+            ->with("1000", "statement")
+            ;
 
-        $data = $this->balancedPayment->debit($accountData->{'uri'}, $cardData->{'uri'}, 1000, "statement");
+        $this->balancedPayment->debit($accountUri, $cardUri, 1000, "statement");
+    }
 
-        $this->assertInstanceOf('Balanced\Debit', $data);
-        $this->assertObjectHasAttribute('amount', $data);
-        $this->assertObjectHasAttribute('appears_on_statement_as', $data);
-        $this->assertObjectHasAttribute('available_at', $data);
-        $this->assertObjectHasAttribute('created_at', $data);
-        $this->assertObjectHasAttribute('description', $data);
-        $this->assertObjectHasAttribute('fee', $data);
-        $this->assertObjectHasAttribute('status', $data);
-        $this->assertObjectHasAttribute('transaction_number', $data);
-        $this->assertObjectHasAttribute('uri', $data);
+    public function testCredit()
+    {
+        $bankAccountUri = "http://bank.uri";
+        $bankAccount = $this->getBalancedBankAccount();
+        $this->factory->expects($this->once())
+            ->method('getBankAccount')
+            ->with($bankAccountUri)
+            ->will($this->returnValue($bankAccount))
+            ;
+        $bankAccount->expects($this->once())
+            ->method('credit')
+            ->with(1000)
+        ;
 
-        $this->assertEquals($data->{'amount'}, 1000);
-        $this->assertEquals($data->{'appears_on_statement_as'}, 'statement');
-        $this->assertEquals($data->{'status'}, 'succeeded');
+        $data = $this->balancedPayment->credit($bankAccountUri, 1000);
     }
 
     public function testPromoteToMerchant()
-    {}
+    {
+    }
 
-    public function testGetCredit()
-    {}
+    private function getBalancedFactory()
+    {
+        return $this->getMockBuilder('Jm\BalancedPaymentBundle\Model\BalancedFactory')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+    }
+
+    private function getAccount()
+    {
+        return $this->getMock('\Balanced\Account');
+    }
+
+    private function getMarketplace()
+    {
+        return $this->getMock('\Balanced\Marketplace');
+    }
+
+    private function getBalancedBankAccount()
+    {
+        return $this->getMock('\Balanced\BankAccount');
+    }
+
+    private function getBalancedCard()
+    {
+        return $this->getMock('\Balanced\Card');
+    }
 
     private function getUser()
     {
@@ -380,8 +298,8 @@ class BalancedPaymentTest extends \PHPUnit_Framework_TestCase
         return $this->getMock('Jm\BalancedPaymentBundle\Model\Card');
     }
 
-    private function getBalancedPayment($apiKey)
+    private function getBalancedPayment($factory)
     {
-        return new \Jm\BalancedPaymentBundle\Model\BalancedPayment($apiKey);
+        return new \Jm\BalancedPaymentBundle\Model\BalancedPayment($factory);
     }
 }
