@@ -40,7 +40,7 @@ application side (some number of the Card/Bank account are replaced by *).
 The bundle provides base classes which are already mapped for most fields
 to make it easier to create your entity. Here is how you use it:
 
-1. Extend the base `Card` and `BankAccount` classes
+1. Extend the base `Card`, `BankAccount` and `BalancedUser` classes
 2. Map the `id` field. It must be protected as it is inherited from the parent
 class.
 
@@ -100,6 +100,35 @@ class BankAccount extends BaseBankAccount
     protected $id;
 }
 ```
+
+
+``` php
+<?php
+// src/Acme/CoreBundle/Entity/User.php
+
+namespace Acme\CoreBundle\Entity;
+
+use Jm\BalancedPaymentBundle\Model\BalancedUser as BaseUser;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="user")
+ */
+class User extends BaseUser
+{
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+}
+```
+If your User class is already extended another class (for example if you are
+using FosUserBundle), you can just add $balancedUri property with getter/setter.
+More informations:
+https://github.com/jeremymarc/JmBalancedPaymentBundle/blob/master/Model/BalancedUser.php
 
 ### Step 5: Configure the JmBalancedPaymentBundle
 ``` yaml
