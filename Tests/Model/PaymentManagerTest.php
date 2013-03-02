@@ -86,7 +86,7 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($returnObject))
         ;
 
-        $result = $this->manager->addBankAccount($bankAccount);
+        $result = $this->manager->createBankAccount($bankAccount);
         $this->assertTrue($result);
     }
 
@@ -129,7 +129,7 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($returnObject))
         ;
 
-        $result = $this->manager->addCard($card);
+        $result = $this->manager->createCard($card);
         $this->assertTrue($result);
     }
 
@@ -197,7 +197,7 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
             ->with("http://account.uri", "http://card.uri", "1000", "PAYMENT", "DESC")
         ;
 
-        $result = $this->manager->debit($card, 1000);
+        $result = $this->manager->debit($card, 1000, "PAYMENT", "DESC");
         $this->assertTrue($result);
     }
 
