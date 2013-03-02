@@ -5,11 +5,11 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     
     <services>
-        <service id="jm_balancedpayment.balanced.factory" class="Jm\BalancedPaymentBundle\Model\BalancedFactory">
+        <service id="jm_balancedpayment.balanced.factory" class="Jm\BalancedPaymentBundle\Model\BalancedFactory" public="false">
             <argument>%jm_balanced_payment.api_key%</argument>
         </service>
 
-        <service id="jm_balancedpayment.balanced_payment" class="Jm\BalancedPaymentBundle\Model\BalancedPayment">
+        <service id="jm_balancedpayment.balanced_payment" class="Jm\BalancedPaymentBundle\Model\BalancedPayment" public="false">
             <argument type="service" id="jm_balancedpayment.balanced.factory" />
         </service>
 
