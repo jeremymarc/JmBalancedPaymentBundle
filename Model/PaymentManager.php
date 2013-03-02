@@ -46,7 +46,7 @@ class PaymentManager
         return true;
     }
 
-    public function addBankAccount(BankAccount $bankAccount)
+    public function createBankAccount(BankAccount $bankAccount)
     {
         if ($this->debug) {
             $this->logger->info(
@@ -81,7 +81,7 @@ class PaymentManager
         return true;
     }
 
-    public function addCard(Card $card)
+    public function createCard(Card $card)
     {
         if ($this->debug) {
             $this->logger->info(
@@ -130,7 +130,7 @@ class PaymentManager
         return true;
     }
 
-    public function debit(Card $card, $amount)
+    public function debit(Card $card, $amount, $statement = null, $description = null)
     {
         if ($this->debug) {
             $this->logger->info(
@@ -142,8 +142,7 @@ class PaymentManager
         $ca = $this->balancedPayment->getCard($card->getBalancedUri());
         $accountUri = $this->getAccountUri($this->user);
 
-        $this->balancedPayment->debit($accountUri, $ca->{'uri'}, $amount, "PAYMENT", "DESC");
-
+        $this->balancedPayment->debit($accountUri, $ca->{'uri'}, $amount, $statement, $description);
         return true;
     }
 
