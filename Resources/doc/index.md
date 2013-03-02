@@ -27,10 +27,15 @@ public function registerBundles()
 
 
 ### Step 3: Create your Entities
-We need to store cards and bankAccount to a database to save the element unique
-id (uri for balancedPayment) and keep informations to display it to your users.
-For security reasons, we are not storing all completed informations (some number 
-of the credit card  and bank account are replaced by *).
+When calling BalancedPayment API
+Users Card and BankAccount are stored in 2 separates entity. We are storing
+element informations (if you need to display it on your applications), and
+balanced payment element unique id (uri).
+More informations : https://www.balancedpayments.com/docs/api?language=php
+
+For security reasons, we are not storing all payment informations on our
+application side (some number of the Card/Bank account are replaced by *).
+
 
 The bundle provides base classes which are already mapped for most fields
 to make it easier to create your entity. Here is how you use it:
@@ -102,3 +107,7 @@ class BankAccount extends BaseBankAccount
 jm_balancedpayment:
     api_key: 'BALANCED API KEY'
 ```
+
+That's it. You can now use the bundle. 
+
+[PaymentManager API](https://github.com/jeremymarc/JmBalancedPaymentBundle/blob/master/Resources/doc/manager.md)
