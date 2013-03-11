@@ -9,7 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PaymentSource
 {
-
     protected $id;
 
     /**
@@ -20,7 +19,7 @@ class PaymentSource
     protected $enabled;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Union\CoreBundle\Entity\User")
+     * @ORM\ManyToOne(targetEntity="Jm\BalancedPaymentBundle\Entity\BalancedUserInterface")
      */
     protected $owner;
 

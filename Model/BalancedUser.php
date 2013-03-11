@@ -2,21 +2,35 @@
 
 namespace Jm\BalancedPaymentBundle\Model;
 
+use Jm\BalancedPaymentBundle\Entity\BalancedUserInterface;
+
 class BalancedUser implements BalancedUserInterface
 {
     /**
+     * @var int $id
+     */
+    protected $id;
+
+    /**
      * @var string $email
-     *
-     * @ORM\Column(name="email", type="string", length=255)
      */
     protected $email;
 
     /**
      * @var string $balancedUri
-     *
-     * @ORM\Column(name="balanced_uri", type="string", length=255)
      */
     protected $balancedUri;
+
+
+    public function getId()
+    {
+        return $this->id;
+    }
+    
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
 
     public function getEmail()
     {

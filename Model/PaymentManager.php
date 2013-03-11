@@ -3,8 +3,13 @@
 namespace Jm\BalancedPaymentBundle\Model;
 
 use Union\PaymentBundle\balancedPayment\PaymentbalancedPaymentFactory;
-use Symfony\Component\Security\Core\SecurityContext;
 use Doctrine\ORM\EntityManager;
+use Jm\BalancedPaymentBundle\Entity\BalancedUserInterface;
+use Jm\BalancedPaymentBundle\Entity\Payment;
+use Jm\BalancedPaymentBundle\Enum\PaymentStatusEnum;
+use Jm\BalancedPaymentBundle\Event\PaymentEvents;
+use Jm\BalancedPaymentBundle\Event\Payment\CreditEvent;
+use Jm\BalancedPaymentBundle\Event\Payment\DebitEvent;
 
 class PaymentManager
 {
@@ -18,24 +23,21 @@ class PaymentManager
 
     protected $debug;
 
-    public function __construct($balancedPayment, SecurityContext $context, $em, $logger, $debug)
+    public function __construct($balancedPayment, $em, $logger, $dispatcher, $debug)
     {
         $this->balancedPayment = $balancedPayment;
         $this->em = $em;
         $this->logger = $logger;
+        $this->dispatcher = $dispatcher;
         $this->debug = $debug;
-
-        if ($context->getToken()) {
-            $this->user = $context->getToken()->getUser();
-        }
     }
 
-    public function createAccount(BalancedUser $user)
+    public function createAccount(BalancedUserInterface $user)
     {
         if ($this->debug) {
             $this->logger->info(
-                printf("[Balanced Payment] Create account for user %d", 
-                $user->getId())
+                sprintf("[Balanced Payment] Create account for user email %s", 
+                $user->getEmail())
             );
         }
 
@@ -46,18 +48,18 @@ class PaymentManager
         return true;
     }
 
-    public function createBankAccount(BankAccount $bankAccount)
+    public function createBankAccount(BankAccount $bankAccount, $user)
     {
         if ($this->debug) {
             $this->logger->info(
-                printf("[Balanced Payment] Create a new bank account %d", 
+                sprintf("[Balanced Payment] Create a new bank account %d", 
                 $bankAccount->getId())
             );
         }
 
         $ba = $this->balancedPayment->createBankAccount($bankAccount);
         $data = $this->balancedPayment->attachBankAccount($ba->{'uri'}, 
-            $this->getAccountUri($this->user));
+            $this->getAccountUri($user));
 
         $bankAccount->setBalancedUri($data->{'uri'});
         $this->em->flush();
@@ -69,7 +71,7 @@ class PaymentManager
     {
         if ($this->debug) {
             $this->logger->info(
-                printf("[Balanced Payment] Removing bank account %d", 
+                sprintf("[Balanced Payment] Removing bank account %d", 
                 $bankAccount->getId())
             );
         }
@@ -81,20 +83,20 @@ class PaymentManager
         return true;
     }
 
-    public function createCard(Card $card)
+    public function createCard(Card $card, $user)
     {
         if ($this->debug) {
             $this->logger->info(
-                printf("[Balanced Payment] Adding card %d", 
+                sprintf("[Balanced Payment] Adding card %d", 
                 $card->getId())
             );
         }
 
         $cardData = $this->balancedPayment->createCard($card);
         $attachData = $this->balancedPayment->attachCard($cardData->{'uri'}, 
-            $this->getAccountUri($this->user));
+            $this->getAccountUri($user));
 
-        $card->setBalancedUri($attachData->{'uri'});
+        $card->setBalancedUri($cardData->{'uri'});
         $this->em->flush();
 
         return true;
@@ -104,7 +106,7 @@ class PaymentManager
     {
         if ($this->debug) {
             $this->logger->info(
-                printf("[Balanced Payment] Removing card %d", 
+                sprintf("[Balanced Payment] Removing card %d", 
                 $card->getId())
             );
         }
@@ -116,53 +118,92 @@ class PaymentManager
         return true;
     }
 
-    public function credit(BankAccount $bankAccount, $amount)
+    public function credit(BankAccount $bankAccount, $user, $amount, $reference = null)
     {
         if ($this->debug) {
             $this->logger->info(
-                printf("[Balanced Payment] Creating a credit of %d to %d", 
+                sprintf("[Balanced Payment] Creating a credit of %d to %d", 
                 $amount, $bankAccount->getId())
             );
         }
 
-        $ba = $this->balancedPayment->credit($bankAccount->getBalancedUri(), $amount);
+        $data = $this->balancedPayment->credit($bankAccount->getBalancedUri(), $amount);
+
+        $applicationUser = $this->em->getReference('Union\CoreBundle\Entity\User', 1);
+
+        $payment = new Payment;
+        $payment
+            ->setFromUser($applicationUser) // us
+            ->setToUser($user)
+            ->setAmount($amount)
+            ->setReference($reference)
+            ->setState(PaymentStatusEnum::PENDING)
+            ->setData(json_encode($data))
+        ;
+
+        $this->em->persist($payment);
+        $this->em->flush();
+
+        //dispatch event
+        $event = new CreditEvent($payment);
+        $this->dispatcher->dispatch(PaymentEvents::CREDIT, $event);
 
         return true;
     }
 
-    public function debit(Card $card, $amount, $statement = null, $description = null)
+    public function debit(Card $card, $user, $amount, $statement = null, $description = null, $reference = null)
     {
         if ($this->debug) {
             $this->logger->info(
-                printf("[Balanced Payment] Creating a debit of %d from %d", 
+                sprintf("[Balanced Payment] Creating a debit of %d from %d", 
                 $amount, $card->getId())
             );
         }
 
         $ca = $this->balancedPayment->getCard($card->getBalancedUri());
-        $accountUri = $this->getAccountUri($this->user);
+        $accountUri = $this->getAccountUri($user);
 
-        $this->balancedPayment->debit($accountUri, $ca->{'uri'}, $amount, $statement, $description);
+        $data = $this->balancedPayment->debit($accountUri, $ca->{'uri'}, $amount, $statement, $description);
+
+        $applicationUser = $this->em->getReference('Union\CoreBundle\Entity\User', 1);
+
+        $payment = new Payment;
+        $payment
+            ->setFromUser($user) 
+            ->setToUser($applicationUser) //us
+            ->setAmount($amount)
+            ->setReference($reference)
+            ->setState(PaymentStatusEnum::SUCCEEDED)
+            ->setData(json_encode($data))
+        ;
+
+        $this->em->persist($payment);
+        $this->em->flush();
+
+        //dispatch event
+        $event = new DebitEvent($payment);
+        $this->dispatcher->dispatch(PaymentEvents::DEBIT, $event);
+
         return true;
     }
 
-    public function promoteToMerchant()
+    public function promoteToMerchant($user)
     {
         if ($this->debug) {
             $this->logger->info(
-                printf("[Balanced Payment] Promoting user %s to a merchant", 
+                sprintf("[Balanced Payment] Promoting user %s to a merchant", 
                 $user->getId())
             );
         }
 
-        $accountUri = $this->getAccountUri($this->user);
+        $accountUri = $this->getAccountUri($user);
         $account = $this->balancedPayment->getAccount($accountUri);
-        $this->balancedPayment->promoteToMerchant($account, $this->user);
+        $this->balancedPayment->promoteToMerchant($account, $user);
 
         return true;
     }
 
-    protected function getAccountUri(BalancedUser $user)
+    protected function getAccountUri(BalancedUserInterface $user)
     {
         return $user->getBalancedUri();
     }
