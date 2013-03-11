@@ -14,7 +14,17 @@
         </service>
 
         <service id="jm_balancedpayment.payment.manager" class="Jm\BalancedPaymentBundle\Model\PaymentManager">
+            <argument type="service" id="jm_balancedpayment.balanced_payment" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="logger" />
+            <argument type="service" id="event_dispatcher" />
+            <argument>%kernel.debug%</argument>
+        </service>
+
+        <service id="jm_balancedpayment.payment_source.listener" class="Jm\BalancedPaymentBundle\Doctrine\Listener\PaymentSourceListener">
+            <argument type="service" id="service_container" />
+            <tag name="doctrine.event_listener" event="preUpdate" />
+            <tag name="doctrine.event_listener" event="prePersist"/>
         </service>
     </services>
 </container>
