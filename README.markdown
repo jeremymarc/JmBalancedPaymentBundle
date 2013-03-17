@@ -40,6 +40,10 @@ This bundle is under the MIT license. See the complete license in the bundle:
     Resources/meta/LICENSE
 
 
+Test
+----
+[![Build Status](http://travis-ci.org/jeremymarc/JmBalancedPaymentBundle.png)]
+(http://travis-ci.org/#!/jeremymarc/JmBalancedPaymentBundle)
 
 Reporting an issue or a feature request
 ---------------------------------------
