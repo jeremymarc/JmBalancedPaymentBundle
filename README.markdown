@@ -42,8 +42,9 @@ This bundle is under the MIT license. See the complete license in the bundle:
 
 Test
 ----
-[![Build Status](http://travis-ci.org/jeremymarc/JmBalancedPaymentBundle.png)]
-(http://travis-ci.org/#!/jeremymarc/JmBalancedPaymentBundle)
+[![Build
+Status](https://travis-ci.org/jeremymarc/JmBalancedPaymentBundle.png?branch=master)](https://travis-ci.org/jeremymarc/JmBalancedPaymentBundle)
+
 
 Reporting an issue or a feature request
 ---------------------------------------
