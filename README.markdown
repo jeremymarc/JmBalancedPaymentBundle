@@ -6,13 +6,14 @@ to accept credit cards and debit bank accounts for your business. (more informat
 
 Features include:
 - BankAccount / Card can be stored via Doctrine ORM
+- Doctrine Event Listener to sync automatically Card/BankAccount with
+  BalancedPayment
+- Payment entity to list all previous debit/credit
+- Command to sync payments status
 - Unit tested
 
 TODO: 
-- Add Doctrine Event Listener to sync automatically Card/BankAccount with
-  BalancedPayment
-- Add a command to sync payments status
-- Add a Payment entity to list all previous debit/credit
+- Add Edit/Delete sync methods in the doctrine listener
 - Add BalancedEventListener to keep an history of all transactions
 
 
