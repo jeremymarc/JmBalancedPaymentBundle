@@ -7,11 +7,11 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Jm\BalancedPaymentBundle\Entity\Payment
  *
- * @ORM\Table("payment")
- * @ORM\Entity(repositoryClass="Jm\BalancedPaymentBundle\Entity\PaymentRepository")
+ * @ORM\Table("balanced_payment")
+ * @ORM\Entity(repositoryClass="Jm\BalancedPaymentBundle\Entity\BalancedPaymentRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Payment
+class BalancedPayment
 {
     /**
      * @var integer $id
