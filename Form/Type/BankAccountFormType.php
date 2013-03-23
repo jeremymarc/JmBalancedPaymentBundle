@@ -6,7 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Jm\BalancedPaymentBundle\Enum\BankAccountTypeEnum;
-use JMS\DiExtraBundle\Annotation as DI;
 
 class BankAccountFormType extends AbstractType
 {

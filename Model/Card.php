@@ -3,7 +3,6 @@
 namespace Jm\BalancedPaymentBundle\Model;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Jm\BalancedPaymentBundle\Model\Card
@@ -80,7 +79,7 @@ class Card
     {
         return $this->number;
     }
-    
+
     /**
      * Set card number.
      *
@@ -89,18 +88,20 @@ class Card
     public function setNumber($number)
     {
         $this->number = $number;
+
         return $this;
     }
 
     /**
      * Set cvv
      *
-     * @param string $cvv
+     * @param  string     $cvv
      * @return CreditCard
      */
     public function setCvv($cvv)
     {
         $this->cvv = $cvv;
+
         return $this;
     }
 
@@ -113,7 +114,7 @@ class Card
     {
         return $this->cvv;
     }
-    
+
     /**
      * Get expirationMonth.
      *
@@ -123,7 +124,7 @@ class Card
     {
         return $this->expirationMonth;
     }
-    
+
     /**
      * Set expirationMonth.
      *
@@ -133,7 +134,7 @@ class Card
     {
         $this->expirationMonth = $expirationMonth;
     }
-    
+
     /**
      * Get expirationYear.
      *
@@ -143,7 +144,7 @@ class Card
     {
         return $this->expirationYear;
     }
-    
+
     /**
      * Set expirationYear.
      *
@@ -157,19 +158,20 @@ class Card
     /**
      * Set enabled
      *
-     * @param boolean $enabled
+     * @param  boolean       $enabled
      * @return PaymentSource
      */
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
+
         return $this;
     }
 
     /**
      * Get enabled
      *
-     * @return boolean 
+     * @return boolean
      */
     public function isEnabled()
     {
@@ -184,6 +186,7 @@ class Card
     public function setOwner($owner)
     {
         $this->owner = $owner;
+
         return $this;
     }
 
@@ -205,6 +208,7 @@ class Card
     public function setBalancedUri($balancedUri)
     {
         $this->balancedUri = $balancedUri;
+
         return $this;
     }
 
@@ -236,6 +240,7 @@ class Card
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
+
         return $this;
     }
 
@@ -257,6 +262,7 @@ class Card
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
+
         return $this;
     }
 

@@ -47,6 +47,7 @@ class BalancedPayment
     public function attachBankAccount($bankAccountUri, $accountUri)
     {
         $account = $this->getAccount($accountUri);
+
         return $account->addBankAccount($bankAccountUri);
     }
 
@@ -78,6 +79,7 @@ class BalancedPayment
     public function attachCard($creditCardUri, $accountUri)
     {
         $account = $this->getAccount($accountUri);
+
         return $account->addCard($creditCardUri);
     }
 
@@ -92,14 +94,15 @@ class BalancedPayment
         $creditCard = $this->getCard($cardUri);
 
         $account = $this->getAccount($accountUri);
+
         return $account->debit($amount, $appearsOnStatement, $description, $meta, $creditCard->{'uri'});
     }
-
 
     public function credit($bankAccountUri, $amount, $description = null, $meta = null, $appearsOnStatement = null)
     {
         $bankAccount = $this->getBankAccount($bankAccountUri);
-        return $bankAccount->credit($amount, $description, $meta, $appearsOnStatement); 
+
+        return $bankAccount->credit($amount, $description, $meta, $appearsOnStatement);
     }
 
     private function getDebit($uri)

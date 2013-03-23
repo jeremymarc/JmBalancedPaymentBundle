@@ -7,4 +7,3 @@ class BankAccountTypeEnum extends Enum
     const CHECKING = 'checking';
     const SAVINGS = 'savings';
 }
-

@@ -62,12 +62,12 @@ class BalancedPayment
 
     /**
       * @ORM\Column(name="data", type="text")
-      */ 
+      */
     private $data;
 
     /**
       * @ORM\Column(name="state", type="string", length=10)
-      */ 
+      */
     private $state;
 
     /**
@@ -103,12 +103,13 @@ class BalancedPayment
     /**
      * Set publicId
      *
-     * @param string $publicId
+     * @param  string  $publicId
      * @return Payment
      */
     public function setPublicId($publicId)
     {
         $this->publicId = $publicId;
+
         return $this;
     }
 
@@ -125,12 +126,13 @@ class BalancedPayment
     /**
      * Set amount
      *
-     * @param float $amount
+     * @param  float   $amount
      * @return Payment
      */
     public function setAmount($amount)
     {
         $this->amount = $amount;
+
         return $this;
     }
 
@@ -147,12 +149,13 @@ class BalancedPayment
     /**
      * Set currency
      *
-     * @param string $currency
+     * @param  string  $currency
      * @return Payment
      */
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+
         return $this;
     }
 
@@ -184,6 +187,7 @@ class BalancedPayment
     public function setReference($reference)
     {
         $this->reference = $reference;
+
         return $this;
     }
 
@@ -205,6 +209,7 @@ class BalancedPayment
     public function setData($data)
     {
         $this->data = $data;
+
         return $this;
     }
 
@@ -226,6 +231,7 @@ class BalancedPayment
     public function setState($state)
     {
         $this->state = $state;
+
         return $this;
     }
 
@@ -247,6 +253,7 @@ class BalancedPayment
     public function setFromUser($fromUser)
     {
         $this->fromUser = $fromUser;
+
         return $this;
     }
 
@@ -268,18 +275,20 @@ class BalancedPayment
     public function setToUser($toUser)
     {
         $this->toUser = $toUser;
+
         return $this;
     }
 
     /**
      * Set createdAt
      *
-     * @param \DateTime $createdAt
+     * @param  \DateTime $createdAt
      * @return Payment
      */
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
+
         return $this;
     }
 
@@ -296,12 +305,13 @@ class BalancedPayment
     /**
      * Set updatedAt
      *
-     * @param \DateTime $updatedAt
+     * @param  \DateTime $updatedAt
      * @return Payment
      */
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
+
         return $this;
     }
 

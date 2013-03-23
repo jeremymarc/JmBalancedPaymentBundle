@@ -1,7 +1,7 @@
 <?php
- 
+
 namespace Jm\BalancedPaymentBundle\Enum;
- 
+
 class BalancedPaymentStatusEnum extends Enum
 {
     const PENDING = 'pending';

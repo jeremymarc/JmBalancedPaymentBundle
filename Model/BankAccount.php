@@ -12,7 +12,7 @@ abstract class BankAccount
 {
     /**
      * @var string $name
-     * 
+     *
      * @ORM\Column(name="name", type="string", length=100)
      * @Assert\NotNull
      */
@@ -86,7 +86,7 @@ abstract class BankAccount
     {
         return $this->name;
     }
-    
+
     /**
      * Set name.
      *
@@ -95,6 +95,7 @@ abstract class BankAccount
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -106,6 +107,7 @@ abstract class BankAccount
     public function setOwner($owner)
     {
         $this->owner = $owner;
+
         return $this;
     }
 
@@ -128,7 +130,7 @@ abstract class BankAccount
     {
         return $this->accountNumber;
     }
-    
+
     /**
      * Set accountNumber.
      *
@@ -137,25 +139,27 @@ abstract class BankAccount
     public function setAccountNumber($accountNumber)
     {
         $this->accountNumber = $accountNumber;
+
         return $this;
     }
 
     /**
      * Set routingNumber
      *
-     * @param string $routingNumber
+     * @param  string      $routingNumber
      * @return BankAccount
      */
     public function setRoutingNumber($routingNumber)
     {
         $this->routingNumber = $routingNumber;
+
         return $this;
     }
 
     /**
      * Get routingNumber
      *
-     * @return string 
+     * @return string
      */
     public function getRoutingNumber()
     {
@@ -165,47 +169,48 @@ abstract class BankAccount
     /**
      * Set type
      *
-     * @param integer $type
+     * @param  integer     $type
      * @return BankAccount
      */
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
     /**
      * Get type
      *
-     * @return integer 
+     * @return integer
      */
     public function getType()
     {
         return $this->type;
     }
-    
+
     /**
      * Set enabled
      *
-     * @param boolean $enabled
+     * @param  boolean       $enabled
      * @return PaymentSource
      */
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
+
         return $this;
     }
 
     /**
      * Get enabled
      *
-     * @return boolean 
+     * @return boolean
      */
     public function isEnabled()
     {
         return $this->enabled;
     }
-
 
     /**
      * Set balancedUri.
@@ -215,6 +220,7 @@ abstract class BankAccount
     public function setBalancedUri($balancedUri)
     {
         $this->balancedUri = $balancedUri;
+
         return $this;
     }
 
@@ -246,6 +252,7 @@ abstract class BankAccount
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
+
         return $this;
     }
 
@@ -267,6 +274,7 @@ abstract class BankAccount
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
+
         return $this;
     }
 }

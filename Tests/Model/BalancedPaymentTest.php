@@ -72,7 +72,6 @@ class BalancedPaymentTest extends \PHPUnit_Framework_TestCase
             ->method('save')
         ;
 
-
         $this->factory->expects($this->once())
             ->method('createBankAccount')
             ->with(array(
@@ -84,7 +83,7 @@ class BalancedPaymentTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($balancedBankAccount))
         ;
 
-        $this->balancedPayment->createBankAccount($bankAccount); 
+        $this->balancedPayment->createBankAccount($bankAccount);
     }
 
     public function testGetBankAccount()
@@ -163,7 +162,7 @@ class BalancedPaymentTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGetCard()
-    { 
+    {
         $cardUri = "http://card.uri";
         $this->factory->expects($this->once())
             ->method('getCard')
@@ -188,7 +187,6 @@ class BalancedPaymentTest extends \PHPUnit_Framework_TestCase
             ->method('addCard')
             ->with($cardUri)
         ;
-
 
         $this->balancedPayment->attachCard($cardUri, $accountUri);
     }

@@ -5,7 +5,6 @@ namespace Jm\BalancedPaymentBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Jm\BalancedPaymentBundle\Enum\BankAccountTypeEnum;
 
 class CardFormType extends AbstractType
 {

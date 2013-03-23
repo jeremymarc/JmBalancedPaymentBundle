@@ -225,7 +225,6 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->manager->promoteToMerchant());
     }
 
-
     private function getCard()
     {
         return $this->getMockBuilder('Jm\BalancedPaymentBundle\Model\Card')
@@ -286,7 +285,7 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
         ;
     }
 
-    private function getPaymentManager(BalancedPayment $bp, 
+    private function getPaymentManager(BalancedPayment $bp,
         SecurityContext $context, EntityManager $em, Logger $logger, $debug)
     {
         return new PaymentManager($bp, $context, $em, $logger, $debug);

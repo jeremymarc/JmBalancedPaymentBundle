@@ -2,7 +2,6 @@
 
 namespace Jm\BalancedPaymentBundle\Model;
 
-use Doctrine\ORM\EntityManager;
 use Jm\BalancedPaymentBundle\Entity\BalancedUserInterface;
 use Jm\BalancedPaymentBundle\Entity\BalancedPayment;
 use Jm\BalancedPaymentBundle\Enum\BalancedPaymentStatusEnum;
@@ -35,7 +34,7 @@ class PaymentManager
     {
         if ($this->debug) {
             $this->logger->info(
-                sprintf("[Balanced Payment] Create account for user email %s", 
+                sprintf("[Balanced Payment] Create account for user email %s",
                 $user->getEmail())
             );
         }
@@ -51,13 +50,13 @@ class PaymentManager
     {
         if ($this->debug) {
             $this->logger->info(
-                sprintf("[Balanced Payment] Create a new bank account %d", 
+                sprintf("[Balanced Payment] Create a new bank account %d",
                 $bankAccount->getId())
             );
         }
 
         $ba = $this->balancedPayment->createBankAccount($bankAccount);
-        $data = $this->balancedPayment->attachBankAccount($ba->{'uri'}, 
+        $data = $this->balancedPayment->attachBankAccount($ba->{'uri'},
             $this->getAccountUri($user));
 
         $bankAccount->setBalancedUri($data->{'uri'});
@@ -70,7 +69,7 @@ class PaymentManager
     {
         if ($this->debug) {
             $this->logger->info(
-                sprintf("[Balanced Payment] Removing bank account %d", 
+                sprintf("[Balanced Payment] Removing bank account %d",
                 $bankAccount->getId())
             );
         }
@@ -86,13 +85,13 @@ class PaymentManager
     {
         if ($this->debug) {
             $this->logger->info(
-                sprintf("[Balanced Payment] Adding card %d", 
+                sprintf("[Balanced Payment] Adding card %d",
                 $card->getId())
             );
         }
 
         $cardData = $this->balancedPayment->createCard($card);
-        $attachData = $this->balancedPayment->attachCard($cardData->{'uri'}, 
+        $attachData = $this->balancedPayment->attachCard($cardData->{'uri'},
             $this->getAccountUri($user));
 
         $card->setBalancedUri($cardData->{'uri'});
@@ -105,7 +104,7 @@ class PaymentManager
     {
         if ($this->debug) {
             $this->logger->info(
-                sprintf("[Balanced Payment] Removing card %d", 
+                sprintf("[Balanced Payment] Removing card %d",
                 $card->getId())
             );
         }
@@ -121,7 +120,7 @@ class PaymentManager
     {
         if ($this->debug) {
             $this->logger->info(
-                sprintf("[Balanced Payment] Creating a credit of %d to %d", 
+                sprintf("[Balanced Payment] Creating a credit of %d to %d",
                 $amount, $bankAccount->getId())
             );
         }
@@ -153,7 +152,7 @@ class PaymentManager
     {
         if ($this->debug) {
             $this->logger->info(
-                sprintf("[Balanced Payment] Creating a debit of %d from %d", 
+                sprintf("[Balanced Payment] Creating a debit of %d from %d",
                 $amount, $card->getId())
             );
         }
@@ -167,7 +166,7 @@ class PaymentManager
 
         $payment = new BalancedPayment;
         $payment
-            ->setFromUser($user) 
+            ->setFromUser($user)
             ->setToUser($applicationUser) //us
             ->setAmount($amount)
             ->setReference($reference)
@@ -189,7 +188,7 @@ class PaymentManager
     {
         if ($this->debug) {
             $this->logger->info(
-                sprintf("[Balanced Payment] Promoting user %s to a merchant", 
+                sprintf("[Balanced Payment] Promoting user %s to a merchant",
                 $user->getId())
             );
         }

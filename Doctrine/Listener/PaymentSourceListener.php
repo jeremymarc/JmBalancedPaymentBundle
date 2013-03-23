@@ -3,7 +3,6 @@
 namespace Jm\BalancedPaymentBundle\Doctrine\Listener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Jm\BalancedPaymentBundle\Model\PaymentManager;
 use Jm\BalancedPaymentBundle\Entity\BalancedUserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -53,6 +52,7 @@ class PaymentSourceListener
     private function getUser()
     {
         $securityContext = $this->container->get('security.context');
+
         return $securityContext->getToken()->getUser();
     }
 }

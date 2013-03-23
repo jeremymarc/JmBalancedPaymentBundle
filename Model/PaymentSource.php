@@ -47,7 +47,7 @@ class PaymentSource
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -57,25 +57,26 @@ class PaymentSource
     /**
      * Set enabled
      *
-     * @param boolean $enabled
+     * @param  boolean       $enabled
      * @return PaymentSource
      */
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
+
         return $this;
     }
 
     /**
      * Get enabled
      *
-     * @return boolean 
+     * @return boolean
      */
     public function isEnabled()
     {
         return $this->enabled;
     }
-    
+
     /**
      * Set owner.
      *
@@ -84,6 +85,7 @@ class PaymentSource
     public function setOwner($owner)
     {
         $this->owner = $owner;
+
         return $this;
     }
 
@@ -96,7 +98,7 @@ class PaymentSource
     {
         return $this->owner;
     }
-    
+
     /**
      * Set balancedUri.
      *
@@ -105,6 +107,7 @@ class PaymentSource
     public function setBalancedUri($balancedUri)
     {
         $this->balancedUri = $balancedUri;
+
         return $this;
     }
 
@@ -127,7 +130,7 @@ class PaymentSource
     {
         return $this->updatedAt;
     }
-    
+
     /**
      * Set updatedAt.
      *
@@ -136,9 +139,10 @@ class PaymentSource
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
+
         return $this;
     }
-    
+
     /**
      * Get createdAt.
      *
@@ -148,7 +152,7 @@ class PaymentSource
     {
         return $this->createdAt;
     }
-    
+
     /**
      * Set createdAt.
      *
@@ -157,6 +161,7 @@ class PaymentSource
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
+
         return $this;
     }
 
