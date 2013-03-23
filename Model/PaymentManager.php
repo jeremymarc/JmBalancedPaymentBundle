@@ -5,8 +5,8 @@ namespace Jm\BalancedPaymentBundle\Model;
 use Union\PaymentBundle\balancedPayment\PaymentbalancedPaymentFactory;
 use Doctrine\ORM\EntityManager;
 use Jm\BalancedPaymentBundle\Entity\BalancedUserInterface;
-use Jm\BalancedPaymentBundle\Entity\Payment;
-use Jm\BalancedPaymentBundle\Enum\PaymentStatusEnum;
+use Jm\BalancedPaymentBundle\Entity\BalancedPayment;
+use Jm\BalancedPaymentBundle\Enum\BalancedPaymentStatusEnum;
 use Jm\BalancedPaymentBundle\Event\PaymentEvents;
 use Jm\BalancedPaymentBundle\Event\Payment\CreditEvent;
 use Jm\BalancedPaymentBundle\Event\Payment\DebitEvent;
@@ -118,7 +118,7 @@ class PaymentManager
         return true;
     }
 
-    public function credit(BankAccount $bankAccount, $user, $amount, $reference = null)
+    public function credit(BankAccount $bankAccount, $user, $amount, $reference, $description = null, $meta = null, $appearsOnStatement = null)
     {
         if ($this->debug) {
             $this->logger->info(
@@ -127,31 +127,30 @@ class PaymentManager
             );
         }
 
-        $data = $this->balancedPayment->credit($bankAccount->getBalancedUri(), $amount);
+        $data = $this->balancedPayment->credit($bankAccount->getBalancedUri(), $amount, $description, $meta, $appearsOnStatement);
 
         $applicationUser = $this->em->getReference('Union\CoreBundle\Entity\User', 1);
 
-        $payment = new Payment;
+        $payment = new BalancedPayment;
         $payment
             ->setFromUser($applicationUser) // us
             ->setToUser($user)
             ->setAmount($amount)
             ->setReference($reference)
-            ->setState(PaymentStatusEnum::PENDING)
+            ->setState(BalancedPaymentStatusEnum::PENDING)
             ->setData(json_encode($data))
         ;
 
         $this->em->persist($payment);
         $this->em->flush();
 
-        //dispatch event
         $event = new CreditEvent($payment);
         $this->dispatcher->dispatch(PaymentEvents::CREDIT, $event);
 
         return true;
     }
 
-    public function debit(Card $card, $user, $amount, $statement = null, $description = null, $reference = null)
+    public function debit(Card $card, $user, $amount, $reference, $statement = null, $description = null, $meta = null)
     {
         if ($this->debug) {
             $this->logger->info(
@@ -163,17 +162,17 @@ class PaymentManager
         $ca = $this->balancedPayment->getCard($card->getBalancedUri());
         $accountUri = $this->getAccountUri($user);
 
-        $data = $this->balancedPayment->debit($accountUri, $ca->{'uri'}, $amount, $statement, $description);
+        $data = $this->balancedPayment->debit($accountUri, $ca->{'uri'}, $amount, $statement, $description, $meta);
 
         $applicationUser = $this->em->getReference('Union\CoreBundle\Entity\User', 1);
 
-        $payment = new Payment;
+        $payment = new BalancedPayment;
         $payment
             ->setFromUser($user) 
             ->setToUser($applicationUser) //us
             ->setAmount($amount)
             ->setReference($reference)
-            ->setState(PaymentStatusEnum::SUCCEEDED)
+            ->setState(BalancedPaymentStatusEnum::SUCCEEDED)
             ->setData(json_encode($data))
         ;
 

@@ -96,10 +96,10 @@ class BalancedPayment
     }
 
 
-    public function credit($bankAccountUri, $amount)
+    public function credit($bankAccountUri, $amount, $description = null, $meta = null, $appearsOnStatement = null)
     {
         $bankAccount = $this->getBankAccount($bankAccountUri);
-        return $bankAccount->credit($amount); 
+        return $bankAccount->credit($amount, $description, $meta, $appearsOnStatement); 
     }
 
     private function getDebit($uri)
