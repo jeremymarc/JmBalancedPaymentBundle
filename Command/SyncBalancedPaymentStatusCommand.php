@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class SyncPaymentStatusCommand extends Command
+class SyncBalancedPaymentStatusCommand extends Command
 {
     protected $em;
     protected $logger;
@@ -72,6 +72,6 @@ class SyncPaymentStatusCommand extends Command
 
     private function getPaymentRepository()
     {
-        return $this->em->getRepository('JmBalancedPaymentBundle:Payment');
+        return $this->em->getRepository('JmBalancedPaymentBundle:BalancedPayment');
     }
 }
