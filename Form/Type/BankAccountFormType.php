@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Jm\BalancedPaymentBundle\Enum\BankAccountTypeEnum;
 use JMS\DiExtraBundle\Annotation as DI;
 
-class BankAccountType extends AbstractType
+class BankAccountFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

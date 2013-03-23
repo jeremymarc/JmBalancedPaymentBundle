@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Jm\BalancedPaymentBundle\Enum\BankAccountTypeEnum;
 
-class CardType extends AbstractType
+class CardFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
