@@ -2,7 +2,6 @@
 
 namespace Jm\BalancedPaymentBundle\Model;
 
-use Union\PaymentBundle\balancedPayment\PaymentbalancedPaymentFactory;
 use Doctrine\ORM\EntityManager;
 use Jm\BalancedPaymentBundle\Entity\BalancedUserInterface;
 use Jm\BalancedPaymentBundle\Entity\BalancedPayment;
@@ -129,7 +128,7 @@ class PaymentManager
 
         $data = $this->balancedPayment->credit($bankAccount->getBalancedUri(), $amount, $description, $meta, $appearsOnStatement);
 
-        $applicationUser = $this->em->getReference('Union\CoreBundle\Entity\User', 1);
+        $applicationUser = $this->em->getReference('Juiiicy\CoreBundle\Entity\User', 1); //todo: refactor
 
         $payment = new BalancedPayment;
         $payment
@@ -164,7 +163,7 @@ class PaymentManager
 
         $data = $this->balancedPayment->debit($accountUri, $ca->{'uri'}, $amount, $statement, $description, $meta);
 
-        $applicationUser = $this->em->getReference('Union\CoreBundle\Entity\User', 1);
+        $applicationUser = $this->em->getReference('Juiiicy\CoreBundle\Entity\User', 1); //todo: refactor
 
         $payment = new BalancedPayment;
         $payment
