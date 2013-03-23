@@ -2,7 +2,7 @@
  
 namespace Jm\BalancedPaymentBundle\Enum;
  
-class PaymentStatusEnum extends Enum
+class BalancedPaymentStatusEnum extends Enum
 {
     const PENDING = 'pending';
 
