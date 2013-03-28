@@ -12,7 +12,10 @@
     ],
     "require": {
         "php": ">=5.3.2",
-        "balanced/balanced": "dev-master"
+        "balanced/balanced": "dev-master",
+        "doctrine/orm": ">=2.2.3,<2.5-dev",
+        "symfony/event-dispatcher": ">= 2.1",
+        "symfony/http-kernel": ">= 2.1"
     },
     "target-dir": "Jm/BalancedPaymentBundle",
     "autoload": {
