@@ -283,7 +283,7 @@ class BalancedPaymentTest extends \PHPUnit_Framework_TestCase
 
     private function getUser()
     {
-        return $this->getMock('FOS\UserBundle\Model\User');
+        return $this->getMock('Jm\BalancedPaymentBundle\Model\BalancedUser');
     }
 
     private function getBankAccount()

@@ -2,16 +2,16 @@
 
 namespace Jm\BalancedPaymentBundle\Tests\Model;
 
-use Symfony\Component\Security\Core\SecurityContext;
-use Doctrine\ORM\EntityManager;
 use Jm\BalancedPaymentBundle\Model\BalancedPayment;
 use Jm\BalancedPaymentBundle\Model\PaymentManager;
-use Symfony\Bridge\Monolog\Logger;
+use Symfony\Component\HttpKernel\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Doctrine\ORM\EntityManager;
 
 class PaymentManagerTest extends \PHPUnit_Framework_TestCase
 {
     private $balancedPayment;
-    private $context;
+    private $dispatcher;
     private $user;
     private $em;
     private $logger;
@@ -21,24 +21,13 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->balancedPayment = $this->getBalancedPayment();
-        $this->context = $this->getSecurityContext();
+        $this->dispatcher = $this->getDispatcher();
 
-        $token = $this->getAuthenticationToken();
         $this->user = $this->getUser();
-        $token->expects($this->once())
-            ->method('getUser')
-            ->will($this->returnValue($this->user))
-        ;
-        $this->context->expects($this->any())
-            ->method('getToken')
-            ->will($this->returnValue($token))
-        ;
-
         $this->em = $this->getEm();
-
         $this->logger = $this->getLogger();
         $this->manager = $this->getPaymentManager($this->balancedPayment,
-            $this->context, $this->em, $this->logger, false);
+            $this->em, $this->logger, $this->dispatcher, 1, false);
 
         $this->email = uniqid(true) . "@test123.com";
     }
@@ -51,7 +40,9 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
             ->method('createAccount')
             ->will($this->returnValue($returnObject))
         ;
-
+        $this->em->expects($this->once())
+            ->method('flush')
+        ;
         $user = $this->getUser();
         $user->expects($this->once())
             ->method('getEmail')
@@ -81,12 +72,18 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
             ->with($bankAccount)
             ->will($this->returnValue($returnObject))
         ;
+        $user = $this->getUser();
+        $user->expects($this->once())
+            ->method('getBalancedUri')
+            ->will($this->returnValue('http://user.uri'))
+        ;
         $this->balancedPayment->expects($this->once())
             ->method('attachBankAccount')
+            ->with('http://uri', 'http://user.uri')
             ->will($this->returnValue($returnObject))
         ;
 
-        $result = $this->manager->createBankAccount($bankAccount);
+        $result = $this->manager->createBankAccount($bankAccount, $user);
         $this->assertTrue($result);
     }
 
@@ -124,12 +121,18 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
             ->with($card)
             ->will($this->returnValue($returnObject))
         ;
+        $user = $this->getUser();
+        $user->expects($this->once())
+            ->method('getBalancedUri')
+            ->will($this->returnValue('http://user.uri'))
+        ;
         $this->balancedPayment->expects($this->once())
             ->method('attachCard')
+            ->with('http://uri', 'http://user.uri')
             ->will($this->returnValue($returnObject))
         ;
 
-        $result = $this->manager->createCard($card);
+        $result = $this->manager->createCard($card, $user);
         $this->assertTrue($result);
     }
 
@@ -164,7 +167,7 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
             ->with('http://uri', 1000)
         ;
 
-        $result = $this->manager->credit($bankAccount, 1000);
+        $result = $this->manager->credit($bankAccount, $this->user, 1000, 'reference');
         $this->assertTrue($result);
     }
 
@@ -179,8 +182,8 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue("http://card.uri"))
         ;
 
-        $this->user
-            ->expects($this->once())
+        $user = $this->getUser();
+        $user->expects($this->once())
             ->method('getBalancedUri')
             ->will($this->returnValue("http://account.uri"))
         ;
@@ -194,22 +197,27 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
         $this->balancedPayment
             ->expects($this->once())
             ->method('debit')
-            ->with("http://account.uri", "http://card.uri", "1000", "PAYMENT", "DESC")
+            ->with("http://account.uri", "http://card.uri", "1000", "statement",
+                "description", "meta")
         ;
 
-        $result = $this->manager->debit($card, 1000, "PAYMENT", "DESC");
+        $result = $this->manager->debit($card, $user, 1000, "reference",
+            "statement", "description", "meta");
+
         $this->assertTrue($result);
     }
 
     public function testPromoteToMerchant()
     {
+
+        $returnAccountObject = new \stdClass;
+        $data = array();
+
         $this->user
             ->expects($this->once())
             ->method('getBalancedUri')
-            ->will($this->returnValue("http://account.uri"))
+            ->will($this->returnValue('http://account.uri'))
         ;
-
-        $returnAccountObject = new \stdClass;
         $this->balancedPayment
             ->expects($this->once())
             ->method('getAccount')
@@ -219,10 +227,10 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
         $this->balancedPayment
             ->expects($this->once())
             ->method('promoteToMerchant')
-            ->with($returnAccountObject, $this->user)
+            ->with($returnAccountObject, $data)
         ;
 
-        $this->assertTrue($this->manager->promoteToMerchant());
+        $this->assertTrue($this->manager->promoteToMerchant($this->user, $data));
     }
 
     private function getCard()
@@ -254,10 +262,9 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
         ;
     }
 
-    private function getSecurityContext()
+    private function getDispatcher()
     {
-        return $this->getMockBuilder('Symfony\Component\Security\Core\SecurityContext')
-            ->disableOriginalConstructor()
+        return $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')
             ->getMock()
         ;
     }
@@ -272,7 +279,7 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
 
     private function getLogger()
     {
-        return $this->getMockBuilder('Symfony\Bridge\Monolog\Logger')
+        return $this->getMockBuilder('Symfony\Component\HttpKernel\Log\LoggerInterface')
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -286,8 +293,10 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     private function getPaymentManager(BalancedPayment $bp,
-        SecurityContext $context, EntityManager $em, Logger $logger, $debug)
+        EntityManager $em, LoggerInterface $logger, EventDispatcherInterface $dispatcher,
+        $marketplaceUserId, $debug)
     {
-        return new PaymentManager($bp, $context, $em, $logger, $debug);
+        return new PaymentManager($bp, $em, $logger, $dispatcher,
+            $marketplaceUserId, $debug);
     }
 }
