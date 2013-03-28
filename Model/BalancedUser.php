@@ -21,6 +21,12 @@ class BalancedUser implements BalancedUserInterface
      */
     protected $balancedUri;
 
+    /**
+     * @var string $username
+     */
+    protected $username;
+
+
     public function getId()
     {
         return $this->id;
@@ -29,6 +35,7 @@ class BalancedUser implements BalancedUserInterface
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
     }
 
     public function getEmail()
@@ -39,7 +46,6 @@ class BalancedUser implements BalancedUserInterface
     public function setEmail($email)
     {
         $this->email = $email;
-
         return $this;
     }
 
@@ -51,7 +57,17 @@ class BalancedUser implements BalancedUserInterface
     public function setBalancedUri($uri)
     {
         $this->balancedUri = $uri;
+        return $this;
+    }
 
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    public function setUsername($username)
+    {
+        $this->username = $username;
         return $this;
     }
 }

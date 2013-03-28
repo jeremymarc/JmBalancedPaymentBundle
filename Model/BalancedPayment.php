@@ -115,7 +115,7 @@ class BalancedPayment
         return $this->balancedFactory->getCredit($uri);
     }
 
-    public function promoteToMerchant($account, $user)
+    public function promoteToMerchant($account, $userUri)
     {
         /*
         $company = $user->getCompany();

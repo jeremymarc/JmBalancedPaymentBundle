@@ -3,11 +3,14 @@
 namespace Jm\BalancedPaymentBundle\Model;
 
 use Jm\BalancedPaymentBundle\Entity\BalancedUserInterface;
-use Jm\BalancedPaymentBundle\Entity\BalancedPayment;
 use Jm\BalancedPaymentBundle\Enum\BalancedPaymentStatusEnum;
 use Jm\BalancedPaymentBundle\Event\PaymentEvents;
 use Jm\BalancedPaymentBundle\Event\Payment\CreditEvent;
 use Jm\BalancedPaymentBundle\Event\Payment\DebitEvent;
+use Jm\BalancedPaymentBundle\Entity\BalancedPayment as Payment;
+use Symfony\Component\HttpKernel\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Doctrine\ORM\EntityManager;
 
 class PaymentManager
 {
@@ -21,13 +24,17 @@ class PaymentManager
 
     protected $debug;
 
-    public function __construct($balancedPayment, $em, $logger, $dispatcher, $debug)
+
+    public function __construct(BalancedPayment $balancedPayment, 
+        EntityManager $em, LoggerInterface $logger, EventDispatcherInterface $dispatcher, 
+        $marketplaceUserId, $debug)
     {
-        $this->balancedPayment = $balancedPayment;
-        $this->em = $em;
-        $this->logger = $logger;
-        $this->dispatcher = $dispatcher;
-        $this->debug = $debug;
+        $this->balancedPayment   = $balancedPayment;
+        $this->em                = $em;
+        $this->logger            = $logger;
+        $this->dispatcher        = $dispatcher;
+        $this->marketplaceUserId = $marketplaceUserId;
+        $this->debug             = $debug;
     }
 
     public function createAccount(BalancedUserInterface $user)
@@ -127,11 +134,11 @@ class PaymentManager
 
         $data = $this->balancedPayment->credit($bankAccount->getBalancedUri(), $amount, $description, $meta, $appearsOnStatement);
 
-        $applicationUser = $this->em->getReference('Juiiicy\CoreBundle\Entity\User', 1); //todo: refactor
+        $applicationUser = $this->getApplicationUser();
 
-        $payment = new BalancedPayment;
+        $payment = new Payment;
         $payment
-            ->setFromUser($applicationUser) // us
+            ->setFromUser($applicationUser)
             ->setToUser($user)
             ->setAmount($amount)
             ->setReference($reference)
@@ -162,12 +169,12 @@ class PaymentManager
 
         $data = $this->balancedPayment->debit($accountUri, $ca->{'uri'}, $amount, $statement, $description, $meta);
 
-        $applicationUser = $this->em->getReference('Juiiicy\CoreBundle\Entity\User', 1); //todo: refactor
+        $applicationUser = $this->getApplicationUser();
 
-        $payment = new BalancedPayment;
+        $payment = new Payment;
         $payment
             ->setFromUser($user)
-            ->setToUser($applicationUser) //us
+            ->setToUser($applicationUser)
             ->setAmount($amount)
             ->setReference($reference)
             ->setState(BalancedPaymentStatusEnum::SUCCEEDED)
@@ -184,7 +191,7 @@ class PaymentManager
         return true;
     }
 
-    public function promoteToMerchant($user)
+    public function promoteToMerchant($user, $data = array())
     {
         if ($this->debug) {
             $this->logger->info(
@@ -195,7 +202,7 @@ class PaymentManager
 
         $accountUri = $this->getAccountUri($user);
         $account = $this->balancedPayment->getAccount($accountUri);
-        $this->balancedPayment->promoteToMerchant($account, $user);
+        $this->balancedPayment->promoteToMerchant($account, $data);
 
         return true;
     }
@@ -203,5 +210,12 @@ class PaymentManager
     protected function getAccountUri(BalancedUserInterface $user)
     {
         return $user->getBalancedUri();
+    }
+
+    protected function getApplicationUser()
+    {
+        return $this->em->getReference(
+            'Jm\BalancedPaymentBundle\Entity\BalancedUserInterface',
+            $this->marketplaceUserId);
     }
 }
