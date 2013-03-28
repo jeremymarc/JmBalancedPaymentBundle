@@ -2,11 +2,10 @@
 
 namespace Jm\BalancedPaymentBundle\Entity;
 
-use Symfony\Component\Security\Core\User\UserInterface as BaseUserInterface;
-
-interface BalancedUserInterface extends BaseUserInterface
+interface BalancedUserInterface
 {
     public function getId();
+    public function getUsername();
     public function getBalancedUri();
     public function setBalancedUri($uri);
 }
