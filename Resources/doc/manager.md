@@ -3,7 +3,7 @@
 ### Create an account
 ```php
 $manager = $this->get('jm_balancedpayment.payment.manager')
-$manager->createAccount($user);
+$manager->createAccount(Jm\BalancedPaymentBundle\Entity\BalancedUserInterface $user);
 ```
 
 
@@ -13,7 +13,7 @@ the current user.
 
 ```php
 $manager = $this->get('jm_balancedpayment.payment.manager')
-$manager->createBankAccount($user);
+$manager->createBankAccount(Jm\BalancedPaymentBundle\Model\BankAccount $bankAccount, Jm\BalancedPaymentBundle\Entity\BalancedUserInterface $user);
 ```
 
 ### Delete a Bank Account
@@ -21,7 +21,7 @@ this method delete a Bank Account in your application and on BalancedPayment sid
 
 ```php
 $manager = $this->get('jm_balancedpayment.payment.manager')
-$manager->deleteBankAccount($bankAccount);
+$manager->deleteBankAccount(Jm\BalancedPaymentBundle\Model\BankAccount $bankAccount);
 ```
 
 
@@ -31,7 +31,7 @@ the current user.
 
 ```php
 $manager = $this->get('jm_balancedpayment.payment.manager')
-$manager->createCard($card);
+$manager->createCard(Jm\BalancedPaymentBundle\Model\Card $card, Jm\BalancedPaymentBundle\Entity\BalancedUserInterface $user);
 ```
 
 
@@ -40,7 +40,7 @@ this method delete a Card in your application and on BalancedPayment side.
 
 ```php
 $manager = $this->get('jm_balancedpayment.payment.manager')
-$manager->deleteCard($bankAccount);
+$manager->deleteCard(Jm\BalancedPaymentBundle\Model\Card $card);
 ```
 
 
@@ -49,7 +49,7 @@ Credit a Bank Account.
 
 ```php
 $manager = $this->get('jm_balancedpayment.payment.manager')
-$manager->deleteCard($bankAccount, $amount);
+$manager->deleteCard(Jm\BalancedPaymentBundle\Model\BankAccount $bankAccount, Jm\BalancedPaymentBundle\Entity\BalancedUserInterface $user, $amount, $reference, $description = null, $meta = null, $appearsOnStatement = null);
 ```
 
 
@@ -58,15 +58,14 @@ Debit a Card.
 
 ```php
 $manager = $this->get('jm_balancedpayment.payment.manager')
-$manager->debit($card, $amount, $statement, $description);
+$manager->debit(Jm\BalancedPaymentBundle\Model\Card $card, Jm\BalancedPaymentBundle\Entity\BalancedUserInterface $user, $amount, $reference, $statement = null, $description = null, $meta = null);
 ```
-$statement and $description are optionals.
 
-TODO
+
 ### Promote to merchant
-this method Promote the current user to a merchant.
+this method Promote the user to a merchant.
 
 ```php
 $manager = $this->get('jm_balancedpayment.payment.manager')
-$manager->promoteToMerchant();
+$manager->promoteToMerchant(Jm\BalancedPaymentBundle\Entity\BalancedUserInterface $user, $data = array());
 ```
