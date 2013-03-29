@@ -26,116 +26,38 @@ public function registerBundles()
 ```
 
 
-### Step 3: Create your Entities
-When calling BalancedPayment API
-Users Card and BankAccount are stored in 2 separates entity. We are storing
-element informations (if you need to display it on your applications), and
-balanced payment element unique id (uri).
-More informations : https://www.balancedpayments.com/docs/api?language=php
+### Step 3: Configure the JmBalancedPaymentBundle
+There are 3 parameters required to configured the bundle.
+api_key : It's the Balanced Payment API key we need to interact with them.
 
-For security reasons, we are not storing all payment informations on our
-application side (some number of the Card/Bank account are replaced by *).
+user_class: CreditCard, BankAccount and BalancedPayment are attached to an user.
+We need to know your application user entity class (for example Acme\CoreBundle\Entity\User)
 
+marketplace_userid: This is your marketplace user ID. Payment are done between 2 users.
+For example a debit is set from a user X (->setFromUser(X)) to this marketplace 
+user id (->setToUser(marketplace_user_id)) and inverse for debit.
 
-The bundle provides base classes which are already mapped for most fields
-to make it easier to create your entity. Here is how you use it:
+doctrine_listener (Optional, default false): Activate the Doctrine listener 
+which keep CreditCard and BankAccount transparently in sync with BalancedPayment: 
+https://github.com/jeremymarc/JmBalancedPaymentBundle/blob/master/Doctrine/Listener/PaymentSourceListener.php
+ 
 
-1. Extend the base `Card`, `BankAccount` and `BalancedUser` classes
-2. Map the `id` field. It must be protected as it is inherited from the parent
-class.
-
-**Warning:**
-
-> When you extend from the mapped superclass provided by the bundle, don't
-> redefine the mapping for the other fields as it is provided by the bundle.
-
-Your `Card` and `BankAccount` class can live inside any bundle in your application. 
-For example, if you work at "Acme" company, then you might create a bundle called
-`AcmePaymentBundle` and place your entity classes in it.
-
-``` php
-<?php
-// src/Acme/PaymentBundle/Entity/Card.php
-
-namespace Acme\PaymentBundle\Entity;
-
-use Jm\BalancedPaymentBundle\Model\BankCard as BaseCard;
-use Doctrine\ORM\Mapping as ORM;
-
-/**
- * @ORM\Entity
- * @ORM\Table(name="card")
- */
-class Card extends BaseCard
-{
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
-}
-```
-
-``` php
-<?php
-// src/Acme/PaymentBundle/Entity/BankAccount.php
-
-namespace Acme\PaymentBundle\Entity;
-
-use Jm\BalancedPaymentBundle\Model\BankAccount as BaseBankAccount;
-use Doctrine\ORM\Mapping as ORM;
-
-/**
- * @ORM\Entity
- * @ORM\Table(name="bank_account")
- */
-class BankAccount extends BaseBankAccount
-{
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
-}
-```
-
-
-``` php
-<?php
-// src/Acme/CoreBundle/Entity/User.php
-
-namespace Acme\CoreBundle\Entity;
-
-use Jm\BalancedPaymentBundle\Model\BalancedUser as BaseUser;
-use Doctrine\ORM\Mapping as ORM;
-
-/**
- * @ORM\Entity
- * @ORM\Table(name="user")
- */
-class User extends BaseUser
-{
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
-}
-```
-If your User class is already extended another class (for example if you are
-using FosUserBundle), you can just add $balancedUri property with getter/setter.
-More informations:
-https://github.com/jeremymarc/JmBalancedPaymentBundle/blob/master/Model/BalancedUser.php
-
-### Step 5: Configure the JmBalancedPaymentBundle
 ``` yaml
 # app/config/config.yml
 jm_balancedpayment:
     api_key: 'BALANCED API KEY'
+    user_class: Acme\UserBundle\Entity\User
+    marketplace_user_id: '1'
+    doctrine_listener: true
 ```
+
+### Step 4: Updating schema
+Your User class must implements BalancedUserInterface :
+https://github.com/jeremymarc/JmBalancedPaymentBundle/blob/master/Entity/BalancedUserInterface.php
+
+To update your application schema, just run the command : 
+```
+./app/console doctrine:schema:update --force
 
 That's it. You can now use the bundle. 
 
