@@ -28,9 +28,8 @@ class PaymentManager
 
     protected $debug;
 
-
-    public function __construct(BalancedPayment $balancedPayment, 
-        EntityManager $em, LoggerInterface $logger, EventDispatcherInterface $dispatcher, 
+    public function __construct(BalancedPayment $balancedPayment,
+        EntityManager $em, LoggerInterface $logger, EventDispatcherInterface $dispatcher,
         $userClass, $marketplaceUserId, $debug)
     {
         $this->balancedPayment   = $balancedPayment;
@@ -58,7 +57,7 @@ class PaymentManager
         return true;
     }
 
-    public function createBankAccount(BankAccount $bankAccount, $user)
+    public function createBankAccount(BankAccount $bankAccount, BalancedUserInterface $user)
     {
         if ($this->debug) {
             $this->logger->info(
@@ -93,7 +92,7 @@ class PaymentManager
         return true;
     }
 
-    public function createCard(Card $card, $user)
+    public function createCard(Card $card, BalancedUserInterface $user)
     {
         if ($this->debug) {
             $this->logger->info(
@@ -128,7 +127,7 @@ class PaymentManager
         return true;
     }
 
-    public function credit(BankAccount $bankAccount, $user, $amount, $reference, $description = null, $meta = null, $appearsOnStatement = null)
+    public function credit(BankAccount $bankAccount, BalancedUserInterface $user, $amount, $reference, $description = null, $meta = null, $appearsOnStatement = null)
     {
         if ($this->debug) {
             $this->logger->info(
@@ -160,7 +159,7 @@ class PaymentManager
         return true;
     }
 
-    public function debit(Card $card, $user, $amount, $reference, $statement = null, $description = null, $meta = null)
+    public function debit(Card $card, BalancedUserInterface $user, $amount, $reference, $statement = null, $description = null, $meta = null)
     {
         if ($this->debug) {
             $this->logger->info(
@@ -196,7 +195,7 @@ class PaymentManager
         return true;
     }
 
-    public function promoteToMerchant($user, $data = array())
+    public function promoteToMerchant(BalancedUserInterface $user, $data = array())
     {
         if ($this->debug) {
             $this->logger->info(
