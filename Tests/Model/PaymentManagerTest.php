@@ -27,7 +27,8 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
         $this->em = $this->getEm();
         $this->logger = $this->getLogger();
         $this->manager = $this->getPaymentManager($this->balancedPayment,
-            $this->em, $this->logger, $this->dispatcher, 1, false);
+            $this->em, $this->logger, $this->dispatcher,
+            'Jm\BalancedPaymentBundle\Entity\BalancedUserInterface', 1, false);
 
         $this->email = uniqid(true) . "@test123.com";
     }
@@ -294,9 +295,9 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
 
     private function getPaymentManager(BalancedPayment $bp,
         EntityManager $em, LoggerInterface $logger, EventDispatcherInterface $dispatcher,
-        $marketplaceUserId, $debug)
+        $userClass, $marketplaceUserId, $debug)
     {
         return new PaymentManager($bp, $em, $logger, $dispatcher,
-            $marketplaceUserId, $debug);
+            $userClass, $marketplaceUserId, $debug);
     }
 }

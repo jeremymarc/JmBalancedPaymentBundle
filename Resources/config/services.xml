@@ -18,6 +18,7 @@
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="logger" />
             <argument type="service" id="event_dispatcher" />
+            <argument>%jm_balancedpayment.user_class%</argument>
             <argument>%jm_balancedpayment.marketplace_user_id%</argument>
             <argument>%kernel.debug%</argument>
         </service>

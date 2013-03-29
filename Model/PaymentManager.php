@@ -16,23 +16,28 @@ class PaymentManager
 {
     protected $balancedPayment;
 
+    protected $em;
+
     protected $logger;
 
-    protected $user;
+    protected $dispatcher;
 
-    protected $em;
+    protected $userClass;
+
+    protected $marketPlaceUserId;
 
     protected $debug;
 
 
     public function __construct(BalancedPayment $balancedPayment, 
         EntityManager $em, LoggerInterface $logger, EventDispatcherInterface $dispatcher, 
-        $marketplaceUserId, $debug)
+        $userClass, $marketplaceUserId, $debug)
     {
         $this->balancedPayment   = $balancedPayment;
         $this->em                = $em;
         $this->logger            = $logger;
         $this->dispatcher        = $dispatcher;
+        $this->userClass         = $userClass;
         $this->marketplaceUserId = $marketplaceUserId;
         $this->debug             = $debug;
     }
@@ -214,8 +219,6 @@ class PaymentManager
 
     protected function getApplicationUser()
     {
-        return $this->em->getReference(
-            'Jm\BalancedPaymentBundle\Entity\BalancedUserInterface',
-            $this->marketplaceUserId);
+        return $this->em->getReference($this->userClass, $this->marketplaceUserId);
     }
 }

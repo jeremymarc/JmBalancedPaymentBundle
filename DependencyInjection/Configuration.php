@@ -14,6 +14,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->scalarNode('user_class')->isRequired()->cannotBeEmpty()->end()
                 ->scalarNode('api_key')->isRequired()->cannotBeEmpty()->end()
                 ->scalarNode('marketplace_user_id')->isRequired()->cannotBeEmpty()->end()
             ->end()
