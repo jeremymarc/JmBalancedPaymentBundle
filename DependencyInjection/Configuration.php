@@ -17,6 +17,9 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('user_class')->isRequired()->cannotBeEmpty()->end()
                 ->scalarNode('api_key')->isRequired()->cannotBeEmpty()->end()
                 ->scalarNode('marketplace_user_id')->isRequired()->cannotBeEmpty()->end()
+                ->booleanNode('doctrine_listener')
+                    ->defaultFalse()
+                ->end()
             ->end()
         ;
 

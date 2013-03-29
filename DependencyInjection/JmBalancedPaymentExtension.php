@@ -17,8 +17,13 @@ class JmBalancedPaymentExtension extends Extension
         $container->setParameter('jm_balanced_payment.api_key', $config['api_key']);
         $container->setParameter('jm_balancedpayment.marketplace_user_id', $config['marketplace_user_id']);
         $container->setParameter('jm_balancedpayment.user_class', $config['user_class']);
+        $container->setParameter('jm_balancedpayment.doctrine_listener', $config['doctrine_listener']);
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
+
+        if (true === $config['doctrine_listener']) {
+            $loader->load('doctrine.xml');
+        }
     }
 }

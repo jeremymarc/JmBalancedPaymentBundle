@@ -23,10 +23,5 @@
             <argument>%kernel.debug%</argument>
         </service>
 
-        <service id="jm_balancedpayment.payment_source.listener" class="Jm\BalancedPaymentBundle\Doctrine\Listener\PaymentSourceListener">
-            <argument type="service" id="service_container" />
-            <tag name="doctrine.event_listener" event="preUpdate" />
-            <tag name="doctrine.event_listener" event="prePersist"/>
-        </service>
     </services>
 </container>
