@@ -86,7 +86,7 @@ class BalancedPayment
 
     public function __construct()
     {
-        $this->currency = "DA";
+        $this->currency = "USD"; //http://www.xe.com/iso4217.php
         $this->setPublicId(md5(mt_rand(1, PHP_INT_MAX)));
     }
 
