@@ -51,8 +51,9 @@ This is your marketplace user ID. Payment are done between 2 users.
 For example a debit is set from a user X (->setFromUser(X)) to this marketplace 
 user id (->setToUser(marketplace_user_id)) and inverse for debit.
 
-doctrine_listener (Optional, default false): Activate the Doctrine listener 
-which keep CreditCard and BankAccount transparently in sync with BalancedPayment: 
+##### doctrine_listener (Optional, default false)
+Activate the Doctrine listener which keep CreditCard and BankAccount 
+transparently in sync with BalancedPayment: 
 https://github.com/jeremymarc/JmBalancedPaymentBundle/blob/master/Doctrine/Listener/PaymentSourceListener.php
  
 
