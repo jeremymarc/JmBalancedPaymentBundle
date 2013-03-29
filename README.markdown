@@ -1,14 +1,14 @@
 JmBalancedPaymentBundle
 =======================
 
-The JmBalancedPaymentBundle integrate BalancedPayment library (https://github.com/balanced/balanced-php) 
+The JmBalancedPaymentBundle integrate Balanced Payment library (https://github.com/balanced/balanced-php) 
 to accept credit cards and debit bank accounts for your business. (more informations: https://www.balancedpayments.com/)
 
 Features include:
 - BankAccount / Card can be stored via Doctrine ORM
 - Doctrine Event Listener to sync automatically Card/BankAccount with
   BalancedPayment
-- Payment entity to list all previous debit/credit
+- Payment entity to list all previous debits/credits
 - Command to sync payments status
 - Unit tested
 
