@@ -44,7 +44,7 @@ class BalancedPayment
     /**
      * @var decimal $amount
      *
-     * @ORM\Column(name="amount", type="decimal", scale=5, length=15)
+     * @ORM\Column(name="amount", type="float")
      */
     private $amount;
 
