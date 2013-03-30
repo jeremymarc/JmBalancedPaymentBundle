@@ -51,7 +51,7 @@ class BalancedPayment
     /**
      * @var string $currency
      *
-     * @ORM\Column(name="currency", type="string", length=2)
+     * @ORM\Column(name="currency", type="string", length=3)
      */
     private $currency;
 
