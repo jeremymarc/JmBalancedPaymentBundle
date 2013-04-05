@@ -21,9 +21,5 @@ class JmBalancedPaymentExtension extends Extension
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
-
-        if (true === $config['doctrine_listener']) {
-            $loader->load('doctrine.xml');
-        }
     }
 }
