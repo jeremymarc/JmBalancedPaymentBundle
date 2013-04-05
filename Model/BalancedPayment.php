@@ -115,36 +115,10 @@ class BalancedPayment
         return $this->balancedFactory->getCredit($uri);
     }
 
-    public function promoteToMerchant($account, $userUri)
+    public function promoteToMerchant($accountUri, $data = array())
     {
-        /*
-        $company = $user->getCompany();
-
-        $merchant_data = array(
-            'phone_number' => $company->getPhone(),
-            'name' => $company->getName(),
-            'postal_code' => $company->getAddress()->getZipCode(),
-            'type' => 'business',
-            'street_address' => $company->getAddress()->getStreet(),
-            'tax_id' => $company->getTaxId(),
-            'person' => array(
-                'phone_number' => $user->getPhone(),
-                'dob' => $user->getBirthday()->format('Y-m-d'),
-                'postal_code' => $user->getAddress()->getZipCode(),
-                'name' => $user->getFirstname() . " " . $user->getLastname(),
-                'street_address' => $user->getAddress()->getStreet(),
-            ),
-        );
-
-        try {
-            $account->promoteToMerchant($merchant_data);
-        } catch (\Balanced\Errors\IdentityVerificationFailed $error) {
-            print "redirect merchant to:" . $error->redirect_uri . "\n";
-        } catch (\Balanced\Errors\HTTPError $error) {
-            throw $error;
-        }
-
-        return $account;
-         */
+        $account = $this->getAccount($accountUri);
+        
+        return $account->promoteToMerchant($data);
     }
 }

@@ -140,6 +140,9 @@ class PaymentManager
 
         $applicationUser = $this->getApplicationUser();
 
+        //store amount in dollars, not in centimes.
+        $amount = $amount / 100;
+
         $payment = new Payment;
         $payment
             ->setFromUser($applicationUser)
@@ -175,6 +178,9 @@ class PaymentManager
 
         $applicationUser = $this->getApplicationUser();
 
+        //store amount in dollars, not in centimes.
+        $amount = $amount / 100;
+
         $payment = new Payment;
         $payment
             ->setFromUser($user)
@@ -205,10 +211,8 @@ class PaymentManager
         }
 
         $accountUri = $this->getAccountUri($user);
-        $account = $this->balancedPayment->getAccount($accountUri);
-        $this->balancedPayment->promoteToMerchant($account, $data);
 
-        return true;
+        return $this->balancedPayment->promoteToMerchant($accountUri, $data);
     }
 
     protected function getAccountUri(BalancedUserInterface $user)

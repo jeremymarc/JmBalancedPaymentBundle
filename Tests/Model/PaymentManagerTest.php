@@ -210,28 +210,22 @@ class PaymentManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testPromoteToMerchant()
     {
-
-        $returnAccountObject = new \stdClass;
+        $accountUri = "http://account.uri";
         $data = array();
 
         $this->user
             ->expects($this->once())
             ->method('getBalancedUri')
-            ->will($this->returnValue('http://account.uri'))
+            ->will($this->returnValue($accountUri))
         ;
-        $this->balancedPayment
-            ->expects($this->once())
-            ->method('getAccount')
-            ->with("http://account.uri")
-            ->will($this->returnValue($returnAccountObject))
-        ;
+
         $this->balancedPayment
             ->expects($this->once())
             ->method('promoteToMerchant')
-            ->with($returnAccountObject, $data)
+            ->with($accountUri, $data)
         ;
 
-        $this->assertTrue($this->manager->promoteToMerchant($this->user, $data));
+        $this->manager->promoteToMerchant($this->user, $data);
     }
 
     private function getCard()
