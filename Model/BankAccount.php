@@ -26,7 +26,7 @@ abstract class BankAccount
     /**
      * @var string $accountNumber
      *
-     * @ORM\Column(name="account_number", type="string", length=10)
+     * @ORM\Column(name="account_number", type="string", length=20)
      * @Assert\NotNull
      */
     protected $accountNumber;
