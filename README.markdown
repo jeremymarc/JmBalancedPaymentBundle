@@ -1,8 +1,8 @@
 JmBalancedPaymentBundle
 =======================
 
-The JmBalancedPaymentBundle integrate Balanced Payment library (https://github.com/balanced/balanced-php) 
-to accept credit cards and debit bank accounts for your business. (more informations: https://www.balancedpayments.com/)
+The JmBalancedPaymentBundle integrates the Balanced Payment library (https://github.com/balanced/balanced-php) 
+to accept credit cards and debit bank accounts for your business. (more information: https://www.balancedpayments.com/)
 
 Features include:
 - BankAccount / Card Entities using Doctrine 
@@ -49,4 +49,4 @@ Reporting an issue or a feature request
 ---------------------------------------
 
 Issues and feature requests are tracked in the [Github issue
-tracker](https://github.com/FriendsOfSymfony/JmBalancedPaymentBundle/issues).
+tracker](https://github.com/jeremymarc/JmBalancedPaymentBundle/issues).

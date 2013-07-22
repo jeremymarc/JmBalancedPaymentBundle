@@ -5,7 +5,7 @@ Getting Started With JmBalancedPaymentBundle
 
 ### Step 1: Download JmBalancedPaymentBundle using composer
 ```
-$ composer require jm/balancedpayment-bundle
+$ composer require jm/balancedpayment-bundle dev-master
 ```
 
 ### Step 2: Enable the bundle
@@ -30,7 +30,7 @@ public function registerBundles()
 
 ``` yaml
 # app/config/config.yml
-jm_balancedpayment:
+jm_balanced_payment:
     api_key: 'BALANCED API KEY'
     user_class: Acme\UserBundle\Entity\User
     marketplace_user_id: '1'
@@ -57,8 +57,18 @@ transparently in sync with BalancedPayment:
 https://github.com/jeremymarc/JmBalancedPaymentBundle/blob/master/Doctrine/Listener/PaymentSourceListener.php
  
 
+### Step 4: Update Doctrine configuration
+You need to configure Doctrine to map the BalancedUserInterface to your user class:
 
-### Step 4: Updating schema
+``` yaml
+# app/config/config.yml
+doctrine:
+    orm:
+        resolve_target_entities:
+            Jm\BalancedPaymentBundle\Entity\BalancedUserInterface: Acme\UserBundle\Entity\User
+```
+
+### Step 5: Updating schema
 Your User class must implements Jm\BalancedPaymentBundle\Entity\BalancedUserInterface :
 https://github.com/jeremymarc/JmBalancedPaymentBundle/blob/master/Entity/BalancedUserInterface.php
 
@@ -67,5 +77,6 @@ To update your application schema, just run the command :
 ./app/console doctrine:schema:update --force
 
 That's it. You can now use the bundle. 
+```
 
 [PaymentManager API](https://github.com/jeremymarc/JmBalancedPaymentBundle/blob/master/Resources/doc/manager.md)
