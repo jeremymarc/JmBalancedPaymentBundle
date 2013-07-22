@@ -8,7 +8,7 @@ $manager->createAccount(Jm\BalancedPaymentBundle\Entity\BalancedUserInterface $u
 
 
 ### Create a Bank Account
-this method will create a BankAccount on BalancedPayment side, and attached it to
+This method will create a BankAccount on BalancedPayment side, and attach it to
 the current user.
 
 ```php
@@ -17,7 +17,7 @@ $manager->createBankAccount(Jm\BalancedPaymentBundle\Model\BankAccount $bankAcco
 ```
 
 ### Delete a Bank Account
-this method delete a Bank Account in your application and on BalancedPayment side.
+This method delete a Bank Account in your application and on BalancedPayment side.
 
 ```php
 $manager = $this->get('jm_balancedpayment.payment.manager')
@@ -26,7 +26,7 @@ $manager->deleteBankAccount(Jm\BalancedPaymentBundle\Model\BankAccount $bankAcco
 
 
 ### Create a Card
-this method will create a Card on BalancedPayment side, and attached it to
+This method will create a Card on BalancedPayment side, and attach it to
 the current user.
 
 ```php
@@ -36,7 +36,7 @@ $manager->createCard(Jm\BalancedPaymentBundle\Model\Card $card, Jm\BalancedPayme
 
 
 ### Delete a Card
-this method delete a Card in your application and on BalancedPayment side.
+This method will delete a Card in your application and on BalancedPayment side.
 
 ```php
 $manager = $this->get('jm_balancedpayment.payment.manager')
@@ -63,7 +63,7 @@ $manager->debit(Jm\BalancedPaymentBundle\Model\Card $card, Jm\BalancedPaymentBun
 
 
 ### Promote to merchant
-this method Promote the user to a merchant.
+This method will promote the user to a merchant.
 
 ```php
 $manager = $this->get('jm_balancedpayment.payment.manager')
