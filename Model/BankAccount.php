@@ -36,8 +36,7 @@ abstract class BankAccount
      *
      * @ORM\Column(name="routing_number", type="string", length=9)
      * @Assert\NotNull
-     * @Assert\MinLength(limit=9)
-     * @Assert\MaxLength(limit=9)
+     * @Assert\Length(min = "9", max = "9")
      */
     protected $routingNumber;
 
