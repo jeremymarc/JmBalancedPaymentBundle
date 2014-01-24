@@ -52,7 +52,7 @@ class BalancedUser implements BalancedUserInterface
 
     public function getBalancedUri()
     {
-        return $balancedUri;
+        return $this->balancedUri;
     }
 
     public function setBalancedUri($uri)
