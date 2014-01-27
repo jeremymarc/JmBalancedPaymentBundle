@@ -33,7 +33,7 @@ class Card
     /**
      * @var number $expirationYear
      *
-     * @ORM\Column(name="exp_year", type="integer", length=2)
+     * @ORM\Column(name="exp_year", type="integer", length=4)
      */
     protected $expirationYear;
 
