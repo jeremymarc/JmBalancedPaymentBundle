@@ -43,7 +43,7 @@ abstract class BankAccount
     /**
      * @var integer $type
      *
-     * @ORM\Column(name="type", type="string", columnDefinition="enum('checking', 'savings')")
+     * @ORM\Column(name="type", type="string")
      * @Assert\Choice(choices={"CHECKING", "SAVINGS"})
      */
     protected $type;
